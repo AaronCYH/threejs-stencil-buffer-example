@@ -20,11 +20,9 @@ const params = {
 };
 
 const clock = new THREE.Clock();
-
 const scene = new THREE.Scene();
-
-const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 1, 100);
-camera.position.set(4, 5, 4);
+const camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 1, 100);
+camera.position.set(-4, 2, 2);
 
 // LIGHTS
 scene.add(new THREE.AmbientLight(0xffffff, 0.9));
@@ -93,69 +91,26 @@ function initCube() {
             scene.add(object);
     }
 
-    addCubeFace(new THREE.ConeGeometry(0.25, 0.5, 4), 'red', 1, new THREE.Vector3(0,0,0.5), new THREE.Vector3(0,0,0));
-    addCubeFace(new THREE.CylinderGeometry(0.15, 0.15, 0.5), 'yellow', 2, new THREE.Vector3(0,0.5,0), new THREE.Vector3(- Math.PI / 2,0,0));
-    addCubeFace(new THREE.OctahedronGeometry(0.25), 'green', 3, new THREE.Vector3(0,-0.5,0), new THREE.Vector3( Math.PI / 2,0,0));
-    addCubeFace(new THREE.TorusGeometry(0.25, 0.1), 'blue', 4, new THREE.Vector3(0,0,-0.5), new THREE.Vector3( Math.PI,0,0));
-    addCubeFace(new THREE.ConeGeometry(0.25, 0.5), 'orange', 5, new THREE.Vector3(-0.5,0,0), new THREE.Vector3( 0, -Math.PI / 2,0));
-    addCubeFace(new THREE.BoxGeometry(0.5, 0.5, 0.5), 'brown', 6, new THREE.Vector3(0.5,0,0), new THREE.Vector3( 0, Math.PI / 2,0));
-
-    const boxBorderMat = new THREE.MeshPhongMaterial({ color: 0x1A120B });
-    boxBorderMat.stencilWrite = true;
-    boxBorderMat.stencilRef = 0;
-    boxBorderMat.stencilFunc = THREE.EqualStencilFunc;
-    const boxBorderGeom = new THREE.BoxGeometry();
-    scene.add(new THREE.Mesh(boxBorderGeom, boxBorderMat));
+     addCubeFace(new THREE.ConeGeometry(0.25, 0.5), 'orange', 1, new THREE.Vector3(-0.5,0,0), new THREE.Vector3( 0, -Math.PI / 2,0));
+     
 }
 
 function initPlanes () {
     const planeGeom = new THREE.PlaneGeometry();
-
     const stencilMat = new THREE.MeshPhongMaterial({ color: 'green' });
     stencilMat.colorWrite = false;
     stencilMat.depthWrite = false;
     stencilMat.stencilWrite = true;
     stencilMat.stencilRef = 1;
     stencilMat.stencilFunc = THREE.AlwaysStencilFunc;
-    // stencilMat.stencilZFail = THREE.ReplaceStencilOp;
-    // stencilMat.stencilFail = THREE.ReplaceStencilOp;
     stencilMat.stencilZPass = THREE.ReplaceStencilOp;
-    const stencilMesh = new THREE.Mesh(planeGeom, stencilMat);
-    const stencilHelper = new THREE.BoxHelper(stencilMesh, 'white');
-    scene.add(stencilHelper);
-    scene.add(stencilMesh);
 
-    const blueMat = new THREE.MeshPhongMaterial({ color: 'blue' });
-    blueMat.stencilWrite = true;
-    blueMat.stencilRef = 1;
-    blueMat.stencilFunc = THREE.NotEqualStencilFunc;
-    const blueMesh = new THREE.Mesh(planeGeom, blueMat);
-    blueMesh.position.x = -0.5;
-    blueMesh.position.y = 0.5;
-    scene.add(blueMesh);
-
-    const redMat = new THREE.MeshPhongMaterial({ color: 'red' });
-    redMat.stencilWrite = true;
-    redMat.stencilRef = 1;
-    redMat.stencilFunc = THREE.EqualStencilFunc;
-    const redMesh = new THREE.Mesh(planeGeom, redMat);
-    redMesh.position.x = 0.5;
-    redMesh.position.y = -0.5;
-    scene.add(redMesh);
-
-    const stencilParams = gui.addFolder('stencilParams');
-    stencilParams.add(params.stencilMesh, 'z').min(- 1).max(1).onChange(d => {
-            stencilMesh.position.z = d
-            stencilHelper.update();
-    });
-    stencilParams.open();
 }
 
 function onWindowResize() {
 
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-
     renderer.setSize(window.innerWidth, window.innerHeight);
 
 }
@@ -163,9 +118,7 @@ function onWindowResize() {
 function animate() {
 
     const delta = clock.getDelta();
-
     requestAnimationFrame(animate);
-
     renderer.render(scene, camera);
 
 }
